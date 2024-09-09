@@ -67,10 +67,20 @@ class _HomepageState extends State<Homepage> {
                         
                         child: Card(
                           child: ListTile(
-                            title: Text(snapshot.data!.docs[index]['title']),
-                            trailing: IconButton(
+                            title: Text(snapshot.data!.docs[index]['Nota']),
+                            trailing: Row(mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
                               onPressed: () => openNoteBox(id: id),
                               icon: const Icon(Icons.settings),
+                            ),
+                              IconButton(
+                                  onPressed: () {
+                                    firestoreservice
+                                        .deleteNote(snapshot.data!.docs[index].id);
+                                  },
+                                  icon: const Icon(Icons.delete))
+                            ],
                             ),
                           ),
                         ));
