@@ -1,3 +1,4 @@
+import 'package:crud/Screens/HomePage.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,35 +9,14 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  void openNoteBox() {
-    showDialog(
-        context: context,
-        builder: (context) => const AlertDialog(
-              content: TextField(),
-            ));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CRUD',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('CRUD Basico'),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: openNoteBox,
-          child: const Icon(Icons.add),
-        ),
-      ),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Homepage(),
     );
   }
 }
