@@ -19,7 +19,7 @@ void showTicketDetails(BuildContext context, TicketAvion ticket) {
               const SizedBox(height: 8.0),
               Text('Aerolínea: ${ticket.aerolinea}', style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8.0),
-              Text('Información del Pasajero: ${ticket.informacionPasajero}', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text('ID del Pasajero: ${ticket.informacionPasajero}', style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8.0),
               Text('Origen: ${ticket.origen}', style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8.0),
