@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TicketAvion {
   String id;
   String nombre;
@@ -11,7 +13,7 @@ class TicketAvion {
       'id': id,
       'nombre': nombre,
       'destino': destino,
-      'fecha': fecha.toIso8601String(),
+      'fecha': Timestamp.fromDate(fecha),
     };
   }
 
@@ -20,7 +22,10 @@ class TicketAvion {
       id: documentId,
       nombre: map['nombre'],
       destino: map['destino'],
-      fecha: DateTime.parse(map['fecha']),
+      fecha: (map['fecha'] as Timestamp).toDate(),
+
+
+
     );
   }
 }
