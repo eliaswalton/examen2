@@ -1,7 +1,10 @@
+import 'package:examen2/Domains/DetallesTickets.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 import 'package:examen2/Models/TicketAvion.dart';
+
 
 class TicketAvionScreen extends StatefulWidget {
   const TicketAvionScreen({super.key});
@@ -12,6 +15,7 @@ class TicketAvionScreen extends StatefulWidget {
 
 class _TicketAvionScreenState extends State<TicketAvionScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final Random _random = Random();
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +87,7 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
                       ),
                     ],
                   ),
+                  onTap: () => showTicketDetails(context, ticket), // Usa la función importada
                 ),
               );
             }).toList(),
@@ -101,47 +106,77 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
       context: context,
       builder: (context) {
         String nombre = '';
+        String numeroVuelo = _generateRandomFlightNumber();
+        String aerolinea = '';
+        String informacionPasajero = '';
+        String origen = '';
         String destino = '';
+        String asiento = _generateRandomSeat();
+        String clase = '';
         DateTime fecha = DateTime.now();
 
         return AlertDialog(
           title: const Text('Crear Ticket'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                onChanged: (value) => nombre = value,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-              ),
-              TextField(
-                onChanged: (value) => destino = value,
-                decoration: const InputDecoration(labelText: 'Destino'),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: fecha,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2101),
-                  );
-                  if (pickedDate != null && pickedDate != fecha) {
-                    setState(() {
-                      fecha = pickedDate;
-                    });
-                  }
-                },
-                child: const Text('Seleccionar Fecha'),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  onChanged: (value) => nombre = value,
+                  decoration: const InputDecoration(labelText: 'Nombre'),
+                ),
+                TextField(
+                  onChanged: (value) => aerolinea = value,
+                  decoration: const InputDecoration(labelText: 'Aerolínea'),
+                ),
+                TextField(
+                  onChanged: (value) => informacionPasajero = value,
+                  decoration: const InputDecoration(labelText: 'Información del Pasajero'),
+                ),
+                TextField(
+                  onChanged: (value) => origen = value,
+                  decoration: const InputDecoration(labelText: 'Origen'),
+                ),
+                TextField(
+                  onChanged: (value) => destino = value,
+                  decoration: const InputDecoration(labelText: 'Destino'),
+                ),
+                TextField(
+                  onChanged: (value) => clase = value,
+                  decoration: const InputDecoration(labelText: 'Clase'),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: fecha,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (pickedDate != null && pickedDate != fecha) {
+                      setState(() {
+                        fecha = pickedDate;
+                      });
+                    }
+                  },
+                  child: const Text('Seleccionar Fecha'),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 _firestore.collection('TicketAvion').add({
                   'nombre': nombre,
+                  'numeroVuelo': numeroVuelo,
+                  'aerolinea': aerolinea,
+                  'informacionPasajero': informacionPasajero,
+                  'origen': origen,
                   'destino': destino,
+                  'asiento': asiento,
+                  'clase': clase,
                   'fecha': fecha,
                 });
                 Navigator.of(context).pop();
@@ -159,49 +194,93 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
       context: context,
       builder: (context) {
         String nombre = ticket.nombre;
+        String numeroVuelo = ticket.numeroVuelo;
+        String aerolinea = ticket.aerolinea;
+        String informacionPasajero = ticket.informacionPasajero;
+        String origen = ticket.origen;
         String destino = ticket.destino;
+        String asiento = ticket.asiento;
+        String clase = ticket.clase;
         DateTime fecha = ticket.fecha;
 
         return AlertDialog(
           title: const Text('Editar Ticket'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                onChanged: (value) => nombre = value,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-                controller: TextEditingController(text: nombre),
-              ),
-              TextField(
-                onChanged: (value) => destino = value,
-                decoration: const InputDecoration(labelText: 'Destino'),
-                controller: TextEditingController(text: destino),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: fecha,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2101),
-                  );
-                  if (pickedDate != null && pickedDate != fecha) {
-                    setState(() {
-                      fecha = pickedDate;
-                    });
-                  }
-                },
-                child: const Text('Seleccionar Fecha'),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                                TextField(
+                  onChanged: (value) => nombre = value,
+                  decoration: const InputDecoration(labelText: 'Nombre'),
+                  controller: TextEditingController(text: nombre),
+                ),
+                TextField(
+                  onChanged: (value) => numeroVuelo = value,
+                  decoration: const InputDecoration(labelText: 'Número de Vuelo'),
+                  controller: TextEditingController(text: numeroVuelo),
+                ),
+                TextField(
+                  onChanged: (value) => aerolinea = value,
+                  decoration: const InputDecoration(labelText: 'Aerolínea'),
+                  controller: TextEditingController(text: aerolinea),
+                ),
+                TextField(
+                  onChanged: (value) => informacionPasajero = value,
+                  decoration: const InputDecoration(labelText: 'Información del Pasajero'),
+                  controller: TextEditingController(text: informacionPasajero),
+                ),
+                TextField(
+                  onChanged: (value) => origen = value,
+                  decoration: const InputDecoration(labelText: 'Origen'),
+                  controller: TextEditingController(text: origen),
+                ),
+                TextField(
+                  onChanged: (value) => destino = value,
+                  decoration: const InputDecoration(labelText: 'Destino'),
+                  controller: TextEditingController(text: destino),
+                ),
+                TextField(
+                  onChanged: (value) => asiento = value,
+                  decoration: const InputDecoration(labelText: 'Asiento'),
+                  controller: TextEditingController(text: asiento),
+                ),
+                TextField(
+                  onChanged: (value) => clase = value,
+                  decoration: const InputDecoration(labelText: 'Clase'),
+                  controller: TextEditingController(text: clase),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: fecha,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (pickedDate != null && pickedDate != fecha) {
+                      setState(() {
+                        fecha = pickedDate;
+                      });
+                    }
+                  },
+                  child: const Text('Seleccionar Fecha'),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 _firestore.collection('TicketAvion').doc(ticket.id).update({
                   'nombre': nombre,
+                  'numeroVuelo': numeroVuelo,
+                  'aerolinea': aerolinea,
+                  'informacionPasajero': informacionPasajero,
+                  'origen': origen,
                   'destino': destino,
+                  'asiento': asiento,
+                  'clase': clase,
                   'fecha': fecha,
                 });
                 Navigator.of(context).pop();
@@ -216,5 +295,20 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
 
   void _deleteTicket(String id) {
     _firestore.collection('TicketAvion').doc(id).delete();
+  }
+
+  String _generateRandomFlightNumber() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    final letter1 = letters[_random.nextInt(letters.length)];
+    final letter2 = letters[_random.nextInt(letters.length)];
+    final number = _random.nextInt(9000) + 1000; // Genera un número de 4 dígitos
+    return '$letter1$letter2$number';
+  }
+
+  String _generateRandomSeat() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    final letter = letters[_random.nextInt(letters.length)];
+    final number = _random.nextInt(50) + 1; // Genera un número de asiento entre 1 y 50
+    return '$number$letter';
   }
 }
