@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
 
     GoRoute(
       path: '/', 
-      builder: (context, state) => TicketAvionScreen()
+      builder: (context, state) => const TicketAvionScreen()
       ),
   ]
     

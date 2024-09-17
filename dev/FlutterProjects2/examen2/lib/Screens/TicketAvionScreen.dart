@@ -62,19 +62,19 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
       DateTime fecha = DateTime.now();
 
       return AlertDialog(
-        title: Text('Crear Ticket'),
+        title: const Text('Crear Ticket'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               onChanged: (value) => nombre = value,
-              decoration: InputDecoration(labelText: 'Nombre'),
+              decoration: const InputDecoration(labelText: 'Nombre'),
             ),
             TextField(
               onChanged: (value) => destino = value,
-              decoration: InputDecoration(labelText: 'Destino'),
+              decoration: const InputDecoration(labelText: 'Destino'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 DateTime? pickedDate = await showDatePicker(
@@ -89,7 +89,7 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
                   });
                 }
               },
-              child: Text('Seleccionar Fecha'),
+              child: const Text('Seleccionar Fecha'),
             ),
           ],
         ),
@@ -103,7 +103,7 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
               });
               Navigator.of(context).pop();
             },
-            child: Text('Guardar'),
+            child: const Text('Guardar'),
           ),
         ],
       );
