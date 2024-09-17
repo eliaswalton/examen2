@@ -8,7 +8,7 @@ void showTicketDetails(BuildContext context, TicketAvion ticket) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Detalles del Ticket'),
+        title: const Text('Detalles del Vuelo'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

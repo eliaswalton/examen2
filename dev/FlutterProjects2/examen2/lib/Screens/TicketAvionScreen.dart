@@ -105,266 +105,274 @@ class _TicketAvionScreenState extends State<TicketAvionScreen> {
   }
 
   void _createTicket() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        String nombre = '';
-        String numeroVuelo = _generateRandomFlightNumber();
-        String aerolinea = 'Avianca';
-        String informacionPasajero = '';
-        String origen = '';
-        String destino = '';
-        String asiento = _generateRandomSeat();
-        String clase = 'Economy'; 
-        DateTime fecha = DateTime.now();
+  showDialog(
+    context: context,
+    builder: (context) {
+      String nombre = '';
+      String numeroVuelo = _generateRandomFlightNumber();
+      String aerolinea = 'Avianca'; 
+      String informacionPasajero = '';
+      String origen = '';
+      String destino = '';
+      String asiento = _generateRandomSeat();
+      String clase = 'Economy'; 
+      DateTime fecha = DateTime.now();
 
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Crear Ticket'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      onChanged: (value) => nombre = value,
-                      decoration: const InputDecoration(labelText: 'Nombre'),
-                    ),
-                    DropdownButton<String>(
-                      value: aerolinea,
-                      onChanged: (String? newValue) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Crear Ticket'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    onChanged: (value) => nombre = value,
+                    decoration: const InputDecoration(labelText: 'Nombre'),
+                  ),
+                  DropdownButton<String>(
+                    value: aerolinea,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        aerolinea = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Avianca',
+                      'Copa Airlines',
+                      'CM Airlines',
+                      'Volaris',
+                      'United Airlines',
+                      'Spirit Airlines',
+                      'Delta Airlines'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  TextField(
+                    onChanged: (value) => informacionPasajero = value,
+                    decoration: const InputDecoration(labelText: 'ID del Pasajero'),
+                  ),
+                  TextField(
+                    onChanged: (value) => origen = value,
+                    decoration: const InputDecoration(labelText: 'Origen'),
+                  ),
+                  TextField(
+                    onChanged: (value) => destino = value,
+                    decoration: const InputDecoration(labelText: 'Destino'),
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButton<String>(
+                    value: clase,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        clase = newValue!;
+                      });
+                    },
+                    items: <String>['Economy', 'Premium Economy', 'Business', 'First Class']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: fecha,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (pickedDate != null && pickedDate != fecha) {
                         setState(() {
-                          aerolinea = newValue!;
+                          fecha = pickedDate;
                         });
-                      },
-                      items: <String>[
-                        'Avianca',
-                        'Copa Airlines',
-                        'CM Airlines',
-                        'Volaris',
-                        'United Airlines',
-                        'Spirit Airlines',
-                        'Delta Airlines'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    TextField(
-                      onChanged: (value) => informacionPasajero = value,
-                      decoration: const InputDecoration(labelText: 'ID del Pasajero'),
-                    ),
-                    TextField(
-                      onChanged: (value) => origen = value,
-                      decoration: const InputDecoration(labelText: 'Origen'),
-                    ),
-                    TextField(
-                      onChanged: (value) => destino = value,
-                      decoration: const InputDecoration(labelText: 'Destino'),
-                    ),
-                    TextField(
-                      onChanged: (value) => asiento = value,
-                      decoration: const InputDecoration(labelText: 'Asiento'),
-                    ),
-                    const SizedBox(height: 20),
-                    DropdownButton<String>(
-                      value: clase,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          clase = newValue!;
-                        });
-                      },
-                      items: <String>['Economy', 'Premium Economy', 'Business', 'First Class']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: fecha,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null && pickedDate != fecha) {
-                          setState(() {
-                            fecha = pickedDate;
-                          });
-                        }
-                      },
-                      child: const Text('Seleccionar Fecha'),
-                    ),
-                  ],
-                ),
+                      }
+                    },
+                    child: const Text('Seleccionar Fecha'),
+                  ),
+                ],
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    _firestore.collection('TicketAvion').add({
-                      'nombre': nombre,
-                      'numeroVuelo': numeroVuelo,
-                      'aerolinea': aerolinea,
-                      'informacionPasajero': informacionPasajero,
-                      'origen': origen,
-                      'destino': destino,
-                      'asiento': asiento,
-                      'clase': clase,
-                      'fecha': fecha,
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Guardar'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _editTicket(TicketAvion ticket) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        String nombre = ticket.nombre;
-        String numeroVuelo = ticket.numeroVuelo;
-        String aerolinea = ticket.aerolinea;
-        String informacionPasajero = ticket.informacionPasajero;
-        String origen = ticket.origen;
-        String destino = ticket.destino;
-        String asiento = ticket.asiento;
-        String clase = ticket.clase;
-        DateTime fecha = ticket.fecha;
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Editar Ticket'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      onChanged: (value) => nombre = value,
-                      decoration: const InputDecoration(labelText: 'Nombre'),
-                      controller: TextEditingController(text: nombre),
-                    ),
-                    TextField(
-                      onChanged: (value) => numeroVuelo = value,
-                      decoration: const InputDecoration(labelText: 'Número de Vuelo'),
-                      controller: TextEditingController(text: numeroVuelo),
-                    ),
-                    DropdownButton<String>(
-                      value: aerolinea,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          aerolinea = newValue!;
-                        });
-                      },
-                      items: <String>[
-                        'Avianca',
-                        'Copa Airlines',
-                        'CM Airlines',
-                        'Volaris',
-                        'United Airlines',
-                        'Spirit Airlines',
-                        'Delta Airlines'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    TextField(
-                      onChanged: (value) => informacionPasajero = value,
-                      decoration: const InputDecoration(labelText: 'ID del Pasajero'),
-                                            controller: TextEditingController(text: informacionPasajero),
-                    ),
-                    TextField(
-                      onChanged: (value) => origen = value,
-                      decoration: const InputDecoration(labelText: 'Origen'),
-                      controller: TextEditingController(text: origen),
-                    ),
-                    TextField(
-                      onChanged: (value) => destino = value,
-                      decoration: const InputDecoration(labelText: 'Destino'),
-                      controller: TextEditingController(text: destino),
-                    ),
-                    TextField(
-                      onChanged: (value) => asiento = value,
-                      decoration: const InputDecoration(labelText: 'Asiento'),
-                      controller: TextEditingController(text: asiento),
-                    ),
-                    const SizedBox(height: 20),
-                    DropdownButton<String>(
-                      value: clase,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          clase = newValue!;
-                        });
-                      },
-                      items: <String>['Economy', 'Premium Economy', 'Business', 'First Class']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: fecha,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null && pickedDate != fecha) {
-                          setState(() {
-                            fecha = pickedDate;
-                          });
-                        }
-                      },
-                      child: const Text('Seleccionar Fecha'),
-                    ),
-                  ],
-                ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancelar'),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    _firestore.collection('TicketAvion').doc(ticket.id).update({
-                      'nombre': nombre,
-                      'numeroVuelo': numeroVuelo,
-                      'aerolinea': aerolinea,
-                      'informacionPasajero': informacionPasajero,
-                      'origen': origen,
-                      'destino': destino,
-                      'asiento': asiento,
-                      'clase': clase,
-                      'fecha': fecha,
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Guardar'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+              TextButton(
+                onPressed: () {
+                  _firestore.collection('TicketAvion').add({
+                    'nombre': nombre,
+                    'numeroVuelo': numeroVuelo,
+                    'aerolinea': aerolinea,
+                    'informacionPasajero': informacionPasajero,
+                    'origen': origen,
+                    'destino': destino,
+                    'asiento': asiento,
+                    'clase': clase,
+                    'fecha': fecha,
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Guardar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
+ void _editTicket(TicketAvion ticket) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      String nombre = ticket.nombre;
+      String numeroVuelo = ticket.numeroVuelo;
+      String aerolinea = ticket.aerolinea;
+      String informacionPasajero = ticket.informacionPasajero;
+      String origen = ticket.origen;
+      String destino = ticket.destino;
+      String asiento = ticket.asiento;
+      String clase = ticket.clase;
+      DateTime fecha = ticket.fecha;
+
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Editar Ticket'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    onChanged: (value) => nombre = value,
+                    decoration: const InputDecoration(labelText: 'Nombre'),
+                    controller: TextEditingController(text: nombre),
+                  ),
+                  TextField(
+                    onChanged: (value) => numeroVuelo = value,
+                    decoration: const InputDecoration(labelText: 'Número de Vuelo'),
+                    controller: TextEditingController(text: numeroVuelo),
+                  ),
+                  DropdownButton<String>(
+                    value: aerolinea,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        aerolinea = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Avianca',
+                      'Copa Airlines',
+                      'CM Airlines',
+                      'Volaris',
+                      'United Airlines',
+                      'Spirit Airlines',
+                      'Delta Airlines'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  TextField(
+                    onChanged: (value) => informacionPasajero = value,
+                    decoration: const InputDecoration(labelText: 'ID del Pasajero'),
+                    controller: TextEditingController(text: informacionPasajero),
+                  ),
+                  TextField(
+                    onChanged: (value) => origen = value,
+                    decoration: const InputDecoration(labelText: 'Origen'),
+                    controller: TextEditingController(text: origen),
+                  ),
+                  TextField(
+                    onChanged: (value) => destino = value,
+                    decoration: const InputDecoration(labelText: 'Destino'),
+                    controller: TextEditingController(text: destino),
+                  ),
+                  TextField(
+                    onChanged: (value) => asiento = value,
+                    decoration: const InputDecoration(labelText: 'Asiento'),
+                    controller: TextEditingController(text: asiento),
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButton<String>(
+                    value: clase,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        clase = newValue!;
+                      });
+                    },
+                    items: <String>['Economy', 'Premium Economy', 'Business', 'First Class']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: fecha,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (pickedDate != null && pickedDate != fecha) {
+                        setState(() {
+                          fecha = pickedDate;
+                        });
+                      }
+                    },
+                    child: const Text('Seleccionar Fecha'),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  _firestore.collection('TicketAvion').doc(ticket.id).update({
+                    'nombre': nombre,
+                    'numeroVuelo': numeroVuelo,
+                    'aerolinea': aerolinea,
+                    'informacionPasajero': informacionPasajero,
+                    'origen': origen,
+                    'destino': destino,
+                    'asiento': asiento,
+                    'clase': clase,
+                    'fecha': fecha,
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Guardar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 
   void _deleteTicket(String id) {
     _firestore.collection('TicketAvion').doc(id).delete();
